@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
 from sys import exit
 from re import match
 from subprocess import Popen
