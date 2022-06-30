@@ -1,11 +1,24 @@
-#!/usr/bin/python3
+﻿#!/usr/bin/python3
 # -*- coding: utf-8 -*-
+
+# For embedded python
+# from sys import path
+# from os import getcwd
+# path.append(getcwd())
 
 from sys import exit, argv
 from match_name import MatchIO
 import subprocess
 from json import loads
 from datetime import datetime
+from time import time
+
+
+def timedelta_to_string(delta, pattern):
+    d = {'d': delta.days}
+    d['h'], rem = divmod(delta.seconds, 3600)
+    d['m'], d['s'] = divmod(rem, 60)
+    return pattern.format(**d)
 
 
 def main():
@@ -24,9 +37,13 @@ def main():
             print("result: {}".format(result), "\n", "err: {}".format(err))
         if not err:
             info = loads(result)
-            bootuptime = int(info.get("lastbootuptime")[6:-2])
-            bootuptime = datetime.fromtimestamp(bootuptime / 1e3)
-            print("Имя компьютера: {}\nДата последней загрузки: {}".format(info.get("csname"), bootuptime.strftime("%d.%m.%Y %H:%M:%S")))
+            bootuptime = int(info.get("lastbootuptime")[6:-2]) / 1e3
+            bootuptime = datetime.fromtimestamp(bootuptime)
+            uptime = datetime.fromtimestamp(time()) - bootuptime
+            result = "Имя компьютера: {}\n".format(info.get("csname"))
+            result += "Дата последней загрузки: {}\n".format(bootuptime.strftime("%d.%m.%Y %H:%M:%S"))
+            result += "Время работы: {}".format(timedelta_to_string(uptime, "{d}:{h}:{m}:{s}"))
+            print(result)
         else:
             print("Произошла ошибка! Попробуйте еще раз.")
     else:
