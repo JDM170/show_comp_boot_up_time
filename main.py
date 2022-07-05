@@ -13,6 +13,8 @@ from json import loads
 from datetime import datetime
 from time import time
 
+is_debug = False
+
 
 def timedelta_to_string(delta, pattern):
     d = {'d': delta.days}
@@ -22,6 +24,7 @@ def timedelta_to_string(delta, pattern):
 
 
 def main():
+    global is_debug
     pc_name = input("\nВведите имя ПК (пр. R54-630300THE01, Ctrl+C для выхода):\n> ").strip()
     f_pc_name = matchio.check_arm_name(pc_name)
     if f_pc_name:
@@ -33,7 +36,7 @@ def main():
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             shell=True).communicate()
-        if debug is True:
+        if is_debug is True:
             print("result: {}".format(result), "\n", "err: {}".format(err))
         if not err:
             info = loads(result)
@@ -54,7 +57,8 @@ def main():
 if __name__ == '__main__':
     try:
         if len(argv) > 1:
-            debug = argv[1].strip() == "debug"
+            is_debug = argv[1].strip() == "debug"
+            # is_debug = argv[1].strip() == "debug" if len(argv) > 1
         matchio = MatchIO()
         main()
     except KeyboardInterrupt:
