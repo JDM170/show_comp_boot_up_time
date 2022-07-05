@@ -1,4 +1,5 @@
-__pycache__
-build
-dist
-upx
+*/__pycache__
+/build
+/dist
+/upx
+/venv
