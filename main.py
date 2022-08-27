@@ -20,6 +20,9 @@ def timedelta_to_string(delta, pattern):
     d = {'d': delta.days}
     d['h'], rem = divmod(delta.seconds, 3600)
     d['m'], d['s'] = divmod(rem, 60)
+    for key, value in d.items():
+        if len(str(value)) == 1:
+            d[key] = "0" + str(value)
     return pattern.format(**d)
 
 
@@ -45,7 +48,7 @@ def main():
             uptime = datetime.fromtimestamp(time()) - bootuptime
             result = "Имя компьютера: {}\n".format(info.get("csname"))
             result += "Дата последней загрузки: {}\n".format(bootuptime.strftime("%d.%m.%Y %H:%M:%S"))
-            result += "Время работы: {}".format(timedelta_to_string(uptime, "{d}:{h}:{m}:{s}"))
+            result += "Время работы (д:ч:м:с): {}".format(timedelta_to_string(uptime, "{d}:{h}:{m}:{s}"))
             print(result)
         else:
             print("Произошла ошибка! Попробуйте еще раз.")
