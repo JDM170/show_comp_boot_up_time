@@ -11,3 +11,10 @@
 ```
 python main.py
 ```
+
+---
+
+Сборка:
+```
+pyinstaller --clean --console --onefile --upx-dir=upx\ --name show_computer_boot_up_time main.py
+```
