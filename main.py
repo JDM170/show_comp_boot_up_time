@@ -29,7 +29,7 @@ def timedelta_to_string(delta, pattern):
 def main():
     global is_debug
     pc_name = input("\nВведите имя ПК (пр. R54-630300THE01, Ctrl+C для выхода):\n> ").strip()
-    f_pc_name = MatchIO().check_pc_name(pc_name)
+    f_pc_name = matchio.check_pc_name(pc_name)
     if f_pc_name:
         # C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\powershell.exe
         # or
@@ -62,6 +62,7 @@ if __name__ == '__main__':
         if len(argv) > 1:
             is_debug = argv[1].strip() == "debug"
             # is_debug = argv[1].strip() == "debug" if len(argv) > 1
+        matchio = MatchIO()
         main()
     except KeyboardInterrupt:
         exit()
