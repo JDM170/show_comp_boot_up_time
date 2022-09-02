@@ -7,6 +7,13 @@
 
 ---
 
+Клонирование:
+```
+git clone https://github.com/JDM170/show_computer_boot_up_time.git --recurse-submodules
+```
+
+---
+
 Запуск:
 ```
 python main.py
