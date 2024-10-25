@@ -28,40 +28,38 @@ def timedelta_to_string(delta, pattern):
 
 def main():
     global is_debug
-    pc_name = input("\nВведите имя ПК (пр. R54-630300THE01, Ctrl+C для выхода):\n> ").strip()
-    f_pc_name = matchio.check_pc_name(pc_name)
-    if f_pc_name:
-        # C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\powershell.exe
-        # or
-        # powershell
-        (result, err) = subprocess.Popen(
-            "C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\powershell.exe -ExecutionPolicy Unrestricted -Command \"Get-CimInstance -ClassName win32_operatingsystem -ComputerName "+f_pc_name+" | select csname, lastbootuptime | ConvertTo-Json\"",
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            shell=True).communicate()
-        if is_debug is True:
-            print("result: {}".format(result), "\n", "err: {}".format(err))
-        if not err:
-            info = loads(result)
-            bootuptime = int(info.get("lastbootuptime")[6:-2]) / 1e3
-            bootuptime = datetime.fromtimestamp(bootuptime)
-            uptime = datetime.fromtimestamp(time()) - bootuptime
-            result = "Имя компьютера: {}\n".format(info.get("csname"))
-            result += "Дата последней загрузки: {}\n".format(bootuptime.strftime("%d.%m.%Y %H:%M:%S"))
-            result += "Время работы (д:ч:м:с): {}".format(timedelta_to_string(uptime, "{d}:{h}:{m}:{s}"))
-            print(result)
-        else:
-            print("Произошла ошибка! Попробуйте еще раз.")
-    else:
+    pc_name = matchio.check_pc_name(input("\nВведите имя ПК (пр. R54-630300THE01, Ctrl+C для выхода):\n> ").strip())
+    if pc_name is False:
         print("Имя компьютера не распознано! Попробуйте еще раз.")
+        main()
+    # C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\powershell.exe
+    # or
+    # powershell
+    (result, err) = subprocess.Popen(
+        "C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\powershell.exe -ExecutionPolicy Unrestricted -Command \"Get-CimInstance -ClassName win32_operatingsystem -ComputerName "+pc_name+" | select csname, lastbootuptime | ConvertTo-Json\"",
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        shell=True).communicate()
+    if is_debug:
+        print("result: {}".format(result), "\n", "err: {}".format(err))
+    if err:
+        print("Произошла ошибка! Попробуйте еще раз.")
+        main()
+    info = loads(result)
+    bootuptime = int(info.get("lastbootuptime")[6:-2]) / 1e3
+    bootuptime = datetime.fromtimestamp(bootuptime)
+    uptime = datetime.fromtimestamp(time()) - bootuptime
+    result = "Имя компьютера: {}\n".format(info.get("csname"))
+    result += "Дата последней загрузки: {}\n".format(bootuptime.strftime("%d.%m.%Y %H:%M:%S"))
+    result += "Время работы (д:ч:м:с): {}".format(timedelta_to_string(uptime, "{d}:{h}:{m}:{s}"))
+    print(result)
     main()  # Рекурсия наше все!...
 
 
 if __name__ == '__main__':
+    if len(argv) == 2:
+        is_debug = argv[1].strip() == "debug"
     try:
-        if len(argv) > 1:
-            is_debug = argv[1].strip() == "debug"
-            # is_debug = argv[1].strip() == "debug" if len(argv) > 1
         matchio = MatchIO()
         main()
     except KeyboardInterrupt:

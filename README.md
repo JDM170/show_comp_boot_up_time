@@ -21,7 +21,12 @@ python main.py
 
 ---
 
-Сборка:
+Сборка (без UPX):
+```
+pyinstaller --clean --console --onefile --name show_computer_boot_up_time main.py
+```
+
+Сборка (с UPX):
 ```
 pyinstaller --clean --console --onefile --upx-dir=upx\ --name show_computer_boot_up_time main.py
 ```
